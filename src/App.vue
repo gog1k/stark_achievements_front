@@ -1,52 +1,49 @@
 <template>
     <div class="body">
-<!--        <nav class="navbar navbar-expand navbar-dark navbar">-->
-<!--            <a href="/" class="navbar-brand">Stark</a>-->
-<!--            <div class="navbar-nav mr-auto">-->
-<!--                <li v-if="currentUser" class="nav-item">-->
-<!--                    <router-link to="/games" class="nav-link">Games</router-link>-->
-<!--                </li>-->
-<!--                <li v-if="showAdminBoard" class="nav-item">-->
-<!--                    <router-link to="/admin" class="nav-link">Admin Board</router-link>-->
-<!--                </li>-->
-<!--                <li v-if="showModeratorBoard" class="nav-item">-->
-<!--                    <router-link to="/mod" class="nav-link">Moderator Board</router-link>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                    <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>-->
-<!--                </li>-->
-<!--            </div>-->
+        <nav class="navbar navbar-expand navbar-dark navbar" v-if="!isUserRoom">
+            <a href="/" class="navbar-brand">Stark</a>
+            <div class="navbar-nav mr-auto">
+                <li v-if="showAdminBoard" class="nav-item">
+                    <router-link to="/admin" class="nav-link">Admin Board</router-link>
+                </li>
+                <li v-if="showModeratorBoard" class="nav-item">
+                    <router-link to="/mod" class="nav-link">Moderator Board</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>
+                </li>
+            </div>
 
-<!--            <div v-if="!currentUser" class="navbar-nav ml-auto">-->
-<!--                <li class="nav-item">-->
-<!--                    <router-link to="/register" class="nav-link">-->
-<!--                        <font-awesome-icon icon="user-plus"/>-->
-<!--                        Sign Up-->
-<!--                    </router-link>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                    <router-link to="/login" class="nav-link">-->
-<!--                        <font-awesome-icon icon="sign-in-alt"/>-->
-<!--                        Login-->
-<!--                    </router-link>-->
-<!--                </li>-->
-<!--            </div>-->
+            <div v-if="!currentUser" class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <router-link to="/register" class="nav-link">
+                        <font-awesome-icon icon="user-plus"/>
+                        Sign Up
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link to="/login" class="nav-link">
+                        <font-awesome-icon icon="sign-in-alt"/>
+                        Login
+                    </router-link>
+                </li>
+            </div>
 
-<!--            <div v-if="currentUser" class="navbar-nav ml-auto">-->
-<!--                <li class="nav-item">-->
-<!--                    <router-link to="/profile" class="nav-link">-->
-<!--                        <font-awesome-icon icon="user"/>-->
-<!--                        {{ currentUser.name }}-->
-<!--                    </router-link>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" @click.prevent="logOut">-->
-<!--                        <font-awesome-icon icon="sign-out-alt"/>-->
-<!--                        LogOut-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </div>-->
-<!--        </nav>-->
+            <div v-if="currentUser" class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <router-link to="/profile" class="nav-link">
+                        <font-awesome-icon icon="user"/>
+                        {{ currentUser.name }}
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" @click.prevent="logOut">
+                        <font-awesome-icon icon="sign-out-alt"/>
+                        LogOut
+                    </a>
+                </li>
+            </div>
+        </nav>
 
         <div class="container-fluid" id="content">
             <div class="row">
@@ -118,6 +115,9 @@ export default {
         isAdminDirectory() {
             return this.$route.path.startsWith('/admin')
                 && this.showAdminBoard
+        },
+        isUserRoom() {
+            return this.$route.path.startsWith('/user-room')
         },
         currentUser() {
             return this.$store.state.auth.user
