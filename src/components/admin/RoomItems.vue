@@ -24,7 +24,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Active</th>
                         <th scope="col">Name</th>
-                        <th scope="col">type</th>
+                        <th scope="col">Object</th>
                         <th scope="col">Project</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -42,7 +42,7 @@
                                 </template>
                             </td>
                             <td>{{ roomItem.name }}</td>
-                            <td>{{ roomItem.type }}</td>
+                            <td>Object</td>
                             <td>
                                 <router-link v-if="roomItem.project?.id" :to="{ name: 'edit-project', params: { propProjectId: roomItem.project.id }}">{{ roomItem.project.name }}</router-link>
                             </td>
@@ -53,11 +53,11 @@
                         </tr>
                     </template>
                     <pagination
-                            v-if="pagination.total"
-                            :total-items="pagination.total"
-                            :items-per-page="pagination.perPage"
-                            :current-page="pagination.currentPage"
-                            @page-changed="changePage"
+                        v-if="pagination.total"
+                        :total-items="pagination.total"
+                        :items-per-page="pagination.perPage"
+                        :current-page="pagination.currentPage"
+                        @page-changed="changePage"
                     />
                     </tbody>
                 </table>
@@ -78,9 +78,19 @@
                         <label>Name</label>
                         <input type="text" class="form-control" placeholder="Item name" v-model="currentRoomItem.name">
                     </div>
+                    <div class="form-group col-12" v-if="activeView === 'create'">
+                        <label>Object</label>
+                        <select class="form-control" v-model="currentRoomItem.default_room_item_id">
+                            <option v-for="item in defaultRoomItems" :key="item" :value="item.id">{{ item.code }}</option>
+                        </select>
+                    </div>
                     <div class="form-group col-12">
-                        <label>Type</label>
-                        <input type="text" class="form-control" placeholder="Item type" v-model="currentRoomItem.type">
+                        <label>Coordinates (x,y,z)</label>
+                        <input type="text" class="form-control" placeholder="0,20,0" v-model="currentRoomItem.coordinates">
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Rotation (x,y,z)</label>
+                        <input type="text" class="form-control" placeholder="0,90,0" v-model="currentRoomItem.rotation">
                     </div>
                     <template v-if="activeView === 'create'">
                         <div class="form-group col-12">
@@ -90,6 +100,10 @@
                             </select>
                         </div>
                     </template>
+                    <div class="form-group col-12">
+                        <label>Template</label>
+                        <input type="file" @change="handleFileUpload( $event )"/>
+                    </div>
                 </div>
                 <div>
                     <div class="btn btn-success mr-3" v-on:click="save()">
@@ -125,6 +139,7 @@ export default {
             roomItemId: this.propRoomItemId,
             currentRoomItem: {},
             projects: [],
+            defaultRoomItems: [],
         }
     },
     props: {
@@ -142,7 +157,7 @@ export default {
     computed: {
         issetRoomItem() {
             return typeof this.currentRoomItem.id !== 'undefined' && this.currentRoomItem.id > 0
-        }
+        },
     },
     methods: {
         changePage(page) {
@@ -169,7 +184,20 @@ export default {
             RoomItemService.get(id).then(
                 (response) => {
                     self.currentRoomItem = response.data
+                    self.currentRoomItem.file = {}
                     self.activeView = 'edit'
+                },
+                (error) => {
+                    console.log(error)
+                },
+            )
+        },
+        getDefaultRoomItem() {
+            let self = this
+
+            RoomItemService.getDefault().then(
+                (response) => {
+                    self.defaultRoomItems = response.data
                 },
                 (error) => {
                     console.log(error)
@@ -208,16 +236,21 @@ export default {
             }
             if (this.activeView === 'edit') {
                 this.getRoomItem(this.roomItemId)
+                this.getDefaultRoomItem(this.roomItemId)
             }
             if (this.activeView === 'create') {
-                await this.getAllowProjects()
                 this.currentRoomItem = {
                     id: 0,
                     active: true,
                     name: '',
-                    type: '',
                     project_id: 0,
+                    default_room_item_id: 0,
+                    coordinates: '0,0,0',
+                    rotation: '0,0,0',
+                    file: null,
                 }
+                await this.getAllowProjects()
+                this.getDefaultRoomItem(this.roomItemId)
             }
         },
         async getAllowProjects() {
@@ -225,11 +258,18 @@ export default {
             await ProjectService.allowProjectList().then(
                 (response) => {
                     self.projects = response.data
+
+                    if (self.currentRoomItem.project_id === 0) {
+                        self.currentRoomItem.project_id = Object.keys(self.projects)[0]
+                    }
                 },
                 (error) => {
                     console.log(error)
                 },
             )
+        },
+        handleFileUpload(event) {
+            this.currentRoomItem.file = event.target.files[0]
         },
     },
     mounted() {

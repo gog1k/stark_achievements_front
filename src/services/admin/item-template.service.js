@@ -28,19 +28,16 @@ class ItemTemplateService
     save(item) {
 
         let formData = new FormData()
-        formData.append('active', item.active)
-        formData.append('name', item.name)
-
-        if (typeof item.file.name !== 'undefined') {
-            formData.append('file', item.file)
+        for (let key in item) {
+            if (typeof item[key] !== 'undefined' && item[key] !== null) {
+                if (key === 'active') {
+                    item[key] = +item[key]
+                }
+                formData.append(key, item[key])
+            }
         }
 
-        if (item.id > 0) {
-            formData.append('id', item.id)
-            return axios.post(API_URL + '/admin/room-item-template/update', formData, { headers: authHeader() })
-        } else {
-            return axios.post(API_URL + '/admin/room-item-template/create', formData, { headers: authHeader() })
-        }
+        return axios.post(API_URL + '/admin/room-item-templates/' + (item.id > 0 ? item.id : 'create'), formData, { headers: authHeader() })
     }
 }
 

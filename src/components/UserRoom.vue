@@ -9,7 +9,7 @@
                     <room-item
                         :uid="item.uid"
                         :object="item.object"
-                        :template="item.template"
+                        :material="item.material"
                         :coordinates="item.coordinates"
                         :rotation="item.rotation"
                     >
@@ -19,18 +19,31 @@
         </div>
     </div>
 </template>
+
+<style lang="scss">
+@import "@/assets/styles/user-room.scss";
+</style>
+
 <script>
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import RoomItem from '@/components/RoomItem.vue'
+import UserService from "../services/user.service";
 
 export default {
     name: 'user-room',
     components: {
         RoomItem,
     },
+    props: {
+        propUserAuthKey: {
+            type: String,
+            default: ''
+        },
+    },
     data() {
         return {
+            userAuthKey: this.propUserAuthKey,
             target: new THREE.Vector3(100, 100, 100),
             distance: 1500,
             phi: Math.PI / 2,
@@ -61,7 +74,7 @@ export default {
                 //         z: 0,
                 //     },
                 //     object: '/images/sky.obj',
-                //     template: '/images/sky.mtl',
+                //     material: '/images/sky.mtl',
                 // },
                 {
                     coordinates: {
@@ -75,7 +88,7 @@ export default {
                         z: 0,
                     },
                     object: '/images/grass.obj',
-                    template: '/images/grass.mtl',
+                    material: '/images/grass.mtl',
                 },
                 {
                     coordinates: {
@@ -89,7 +102,7 @@ export default {
                         z: 0,
                     },
                     object: '/images/room.obj',
-                    template: '/images/room.mtl',
+                    material: '/images/room.mtl',
                 },
                 {
                     coordinates: {
@@ -103,7 +116,7 @@ export default {
                         z: 0,
                     },
                     object: '/images/shelf.obj',
-                    template: '/images/shelf.mtl',
+                    material: '/images/shelf.mtl',
                 },
                 // {
                 //     coordinates: {
@@ -117,7 +130,7 @@ export default {
                 //         z: 0,
                 //     },
                 //     object: '/images/shelf.obj',
-                //     template: '/images/shelf.mtl',
+                //     material: '/images/shelf.mtl',
                 // },
                 {
                     coordinates: {
@@ -131,7 +144,7 @@ export default {
                         z: 0,
                     },
                     object: '/images/window.obj',
-                    template: '/images/window.mtl',
+                    material: '/images/window.mtl',
                 },
                 {
                     coordinates: {
@@ -145,12 +158,14 @@ export default {
                         z: 0,
                     },
                     object: '/images/door.obj',
-                    template: '/images/door.mtl',
+                    material: '/images/door.mtl',
                 },
             ],
         }
     },
     mounted() {
+        let self = this
+
         this.scene = new THREE.Scene()
 
         this.camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 1, 10000)
@@ -162,27 +177,9 @@ export default {
         this.renderer.setClearColor(0x3B3B3B, 1)
         this.$refs.canvasWrapper.appendChild(this.renderer.domElement)
 
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1)
+        let light = new THREE.DirectionalLight(0xFFFFFF, .3)
         light.position.set(900, 600, 900)
         this.scene.add(light)
-
-        // let earthGeometry = new THREE.SphereGeometry(1, 32, 32);
-        // let earthMaterial = new THREE.MeshPhongMaterial({
-        //     map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/earth_atmos_2048.jpg'),
-        //     specularMap: new THREE.TextureLoader().load('https://threejs.org/examples/textures/earth_specular_2048.jpg'),
-        //     specular: new THREE.Color('grey'),
-        //     shininess: 5
-        // });
-        // let earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
-        // this.scene.add(earthMesh);
-
-        // const skyGeometry = new THREE.SphereGeometry(10000, 32, 32);
-        // const skyMaterial = new THREE.MeshBasicMaterial({
-        //     map: new THREE.TextureLoader().load('https://threejs.org/examples/textures/2k_stars.jpg'),
-        //     side: THREE.BackSide
-        // });
-        // const skyMesh = new THREE.Mesh(skyGeometry, skyMaterial);
-        // this.scene.add(skyMesh);
 
         this.$refs.canvasWrapper.addEventListener('mousedown', this.handleMouseDown)
         this.$refs.canvasWrapper.addEventListener('mousemove', this.handleMouseMove)
@@ -191,7 +188,21 @@ export default {
 
         this.render()
 
-        this.loading = false
+        UserService.getUserBoard(self.userAuthKey).then(
+            (response) => {
+                console.log(response)
+                // self.items = response.data;
+                this.loading = false
+            },
+            (error) => {
+                self.content =
+                    (error.response &&
+                        error.response.data &&
+                        error.response.data.message) ||
+                    error.message ||
+                    error.toString();
+            }
+        );
     },
     beforeUnmount() {
         this.$refs.canvasWrapper.removeEventListener('mousedown', this.handleMouseDown)
@@ -275,15 +286,3 @@ export default {
     },
 }
 </script>
-
-<style>
-.room {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-    margin-top: -56px;
-    padding-top: 56px;
-    color: #9e4c4c
-}
-</style>

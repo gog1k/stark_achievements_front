@@ -51,10 +51,10 @@
                     <nav id="sidebar">
                         <ul class="nav flex-column">
                             <li class="nav-item" v-if="isSuperUser">
-                                <router-link :to="{ name: 'projects' }" class="nav-link">Projects</router-link>
-                            </li>
-                            <li class="nav-item" v-if="isSuperUser">
                                 <router-link :to="{ name: 'users' }" class="nav-link">Users</router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :to="{ name: 'projects' }" class="nav-link">Projects</router-link>
                             </li>
                             <li class="nav-item">
                                 <router-link :to="{ name: 'room-items' }" class="nav-link">Room items</router-link>

@@ -1,95 +1,103 @@
 <template>
     <div class="container-fluid">
-        <header>
-            <template v-if="activeView==='all' || activeView === 'listForItem' || activeView === 'listForTemplate'">
-                <h3 class="mt-3">Room item templates</h3>
-                <div v-if="activeView !== 'all'" class="btn btn-primary mb-3 mr-3" v-on:click="goToList()">All templates</div>
-                <div class="btn btn-primary mb-3 mr-3" v-on:click="createItem()">Create new</div>
-                <div>
-                    <table class="table table-bordered table-striped">
-                        <thead>
+        <template v-if="activeView==='all' || activeView === 'listForItem' || activeView === 'listForTemplate'">
+            <h3 class="mt-3">Room item templates</h3>
+            <div v-if="activeView !== 'all'" class="btn btn-primary mb-3 mr-3" v-on:click="goToList()">All templates</div>
+            <div class="btn btn-primary mb-3 mr-3" v-on:click="createItem()">Create new</div>
+            <div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">template</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template v-for="(template,index) in templates" :key="template">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Active</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">template</th>
-                            <th scope="col">Actions</th>
+                            <th scope="row">{{ index + 1 }}</th>
+                            <td>
+                                <template v-if="!!template.active">
+                                    <i class="fa-xl bi bi-check-circle-fill text-success"></i>
+                                </template>
+                                <template v-else>
+                                    <i class="fa-xl bi bi-x-circle-fill text-danger"></i>
+                                </template>
+                            </td>
+                            <td>{{ template.name }}</td>
+                            <td><img style="max-width: 25px;" :src="template.template"></td>
+                            <td>
+                                <button type="button" class="btn btn-primary mr-3" v-on:click="editItem(template.id)">Edit</button>
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        <template v-for="(template,index) in templates" :key="template">
-                            <tr>
-                                <th scope="row">{{ index + 1 }}</th>
-                                <td>
-                                    <template v-if="!!template.active">
-                                        <i class="fa-xl bi bi-check-circle-fill text-success"></i>
-                                    </template>
-                                    <template v-else>
-                                        <i class="fa-xl bi bi-x-circle-fill text-danger"></i>
-                                    </template>
-                                </td>
-                                <td>{{ template.name }}</td>
-                                <td><img style="max-width: 25px;" :src="template.template"></td>
-                                <td>
-                                    <button type="button" class="btn btn-primary mr-3" v-on:click="editItem(template.id)">Edit</button>
-                                </td>
-                            </tr>
-                        </template>
-                        </tbody>
-                    </table>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template v-else-if="activeView==='update' || activeView === 'create'">
+            <div>
+                <h3 class="mt-3">
+                    <template v-if="activeView === 'update'">
+                        Edit template
+                    </template>
+                    <template v-else>
+                        Create template
+                    </template>
+                </h3>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="template.active">
+                            <label class="form-check-label" for="activeCheckBox">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Name</label>
+                        <input type="text" class="form-control" placeholder="Template name" v-model="template.name">
+                    </div>
+                    <div class="form-group col-12" v-if="activeView === 'create'">
+                        <label>Room item</label>
+                        <div v-if="roomItems.length === 1">
+                            <b>{{ roomItems[0].name }}</b>
+                        </div>
+                        <select v-else class="form-control" v-model="template.room_item_id">
+                            <option v-for="item in roomItems" :key="item" :value="item.id">{{ item.name }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-12">
+                        <label>File</label>
+                        <input type="file" @change="handleFileUpload( $event )"/>
+                    </div>
+                    <div class="form-group col-12">
+                        <img style="max-width: 25px;" :src="template.template">
+                    </div>
                 </div>
-            </template>
-            <template v-else-if="activeView==='update' || activeView === 'create'">
                 <div>
-                    <h3 class="mt-3">
+                    <div class="btn btn-success mr-3" v-on:click="saveTemplate()">
                         <template v-if="activeView === 'update'">
-                            Edit template
+                            Update
                         </template>
                         <template v-else>
-                            Create template
+                            Create
                         </template>
-                    </h3>
-                    <div class="row">
-                        <div class="form-group col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" v-model="template.active">
-                                <label class="form-check-label" for="activeCheckBox">
-                                    Active
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group col-12">
-                            <label>Name</label>
-                            <input type="text" class="form-control" placeholder="Template name" v-model="template.name">
-                        </div>
-                        <div class="form-group col-12">
-                            <label>File</label>
-                            <input type="file" @change="handleFileUpload( $event )"/>
-                        </div>
-                        <div class="form-group col-12">
-                            <img style="max-width: 25px;" :src="template.template">
-                        </div>
                     </div>
-                    <div>
-                        <div class="btn btn-success mr-3" v-on:click="saveTemplate()">
-                            <template v-if="activeView === 'update'">
-                                Update
-                            </template>
-                            <template v-else>
-                                Create
-                            </template>
-                        </div>
-                        <div class="btn btn-primary mr-3" v-on:click="goToList()">Back</div>
-                    </div>
+                    <div class="btn btn-primary mr-3" v-on:click="goToList()">Back</div>
                 </div>
-            </template>
-        </header>
+            </div>
+        </template>
     </div>
 </template>
 
 <script>
 import ItemTemplateService from '@/services/admin/item-template.service'
 import router from '@/router'
+import RoomItemService from '@/services/admin/roomItem.service'
 
 export default {
     name: 'room-item-templates',
@@ -105,6 +113,7 @@ export default {
                 default: 0,
             },
             file: {},
+            roomItems: [],
         }
     },
     props: {
@@ -125,21 +134,21 @@ export default {
         },
         propTemplateId: {
             type: String,
-            default: 'all',
+            default: '0',
             required: false,
         },
     },
     methods: {
         goToList() {
             router.push('/admin/room-item-templates')
-            this.getTemplates('all')
+            this.getTemplates(0)
         },
         getTemplates(type) {
             let self = this
 
             if (type === 'listForTemplate') {
 
-                ItemTemplateService.allForTemplate(self.templateId).then(
+                ItemTemplateService.getAllForTemplate(self.templateId).then(
                     (response) => {
                         self.templates = response.data
                         self.activeView = type
@@ -197,21 +206,30 @@ export default {
             }
 
             if (type === 'create') {
-                self.template = {
-                    id: 0,
-                    active: true,
-                    name: '',
-                    template: '',
-                    file: {},
-                }
-                this.activeView = type
+                RoomItemService.getAllow(this.templateId).then(
+                    (response) => {
+                        self.roomItems = response.data
+                        self.template = {
+                            id: 0,
+                            active: true,
+                            name: '',
+                            room_item_id: self.roomItems[0].id,
+                            file: {},
+                        }
+                        console.log(self.template)
+                        this.activeView = type
+                    },
+                    (error) => {
+                        console.log(error)
+                    },
+                )
             }
         },
         saveTemplate() {
             ItemTemplateService.save(this.template).then(
                 () => {
                     router.push('/admin/room-item-templates')
-                    this.getTemplates('all')
+                    this.getTemplates(0)
                 },
                 (error) => {
                     console.log(error)
@@ -224,8 +242,13 @@ export default {
             this.getTemplate('update')
         },
         createItem() {
-            router.push('/admin/room-item-templates/create')
-            this.getTemplate('create')
+            if (this.templateId > 0) {
+                router.push('/admin/room-item-templates/template/' + (+this.templateId) + '/create')
+                this.getTemplate('create')
+            } else {
+                router.push('/admin/room-item-templates/create')
+                this.getTemplate('create')
+            }
         },
         handleFileUpload(event) {
             this.template.file = event.target.files[0]

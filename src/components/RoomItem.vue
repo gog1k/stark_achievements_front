@@ -31,14 +31,14 @@ export default {
             },
         },
         object: { type: String, default: '' },
-        template: { type: String, default: '' },
+        material: { type: String, default: '' },
     },
     mounted() {
         let self = this
 
         let objLoader = new OBJLoader()
         let mtlLoader = new MTLLoader()
-        mtlLoader.load(self.template, (mtl) => {
+        mtlLoader.load(self.material, (mtl) => {
             mtl.preload()
             objLoader.setMaterials(mtl)
             objLoader.load(self.object, (object) => {

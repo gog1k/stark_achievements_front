@@ -215,8 +215,19 @@ const routes = [
 
 
     {
+        path: '/admin/room-item-templates/template/:propTemplateId/create',
+        name: 'create templates for room item',
+        // lazy-loaded
+        component: RoomItemsTemplates,
+        props: function(route) {
+            return Object.assign({}, route.params, {
+                propActiveView: 'create'
+            })
+        }
+    },
+    {
         path: '/admin/room-item-templates/template/:propTemplateId',
-        name: 'update room item templates',
+        name: 'get templates for room item',
         // lazy-loaded
         component: RoomItemsTemplates,
         props: function(route) {
@@ -303,7 +314,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const publicPages = ['/login', '/register', '/home', '/'];
-  const authRequired = !publicPages.includes(to.path);
+  const authRequired = !publicPages.includes(to.path) && !to.path.includes('/user-room/');
   const loggedIn = localStorage.getItem('user');
 
   // trying to access a restricted page + not logged in

@@ -83,7 +83,7 @@
                     </div>
                     <template v-if="activeView === 'create'">
                         <div class="form-group col-12">
-                            <label>Type</label>
+                            <label>Code</label>
                             <input type="text" class="form-control" placeholder="Event code" v-model="currentAchievement.code">
                         </div>
                         <div class="form-group col-12">
