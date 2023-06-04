@@ -46,7 +46,7 @@ export default {
         return {
             userAuthKey: this.propUserAuthKey,
             target: new THREE.Vector3(100, 100, 100),
-            distance: 1500,
+            distance: 1200,
             phi: Math.PI / 2,
             theta: Math.PI / 2,
             minPhi: 0.1,
@@ -79,7 +79,7 @@ export default {
         this.renderer.setClearColor(0x3B3B3B, 1)
         this.$refs.canvasWrapper.appendChild(this.renderer.domElement)
 
-        let light = new THREE.DirectionalLight(0xFFFFFF, .3)
+        let light = new THREE.DirectionalLight(0xFFFFFF, 1)
         light.position.set(900, 600, 900)
         this.scene.add(light)
 
