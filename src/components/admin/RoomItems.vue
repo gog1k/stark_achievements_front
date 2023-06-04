@@ -42,7 +42,7 @@
                                 </template>
                             </td>
                             <td>{{ roomItem.name }}</td>
-                            <td>Object</td>
+                            <td><admin-object-view :propObject="getObject(roomItem)"></admin-object-view></td>
                             <td>
                                 <router-link v-if="roomItem.project?.id" :to="{ name: 'edit-project', params: { propProjectId: roomItem.project.id }}">{{ roomItem.project.name }}</router-link>
                             </td>
@@ -125,9 +125,11 @@
 import ProjectService from '@/services/admin/project.service'
 import RoomItemService from '../../services/admin/roomItem.service'
 import Pagination from '@/components/Pagination.vue'
+import AdminObjectView from '@/components/modules/ObjectView.vue'
 
 export default {
     components: {
+        AdminObjectView,
         Pagination,
     },
     name: 'admin-room-items',
@@ -184,7 +186,7 @@ export default {
             RoomItemService.get(id).then(
                 (response) => {
                     self.currentRoomItem = response.data
-                    self.currentRoomItem.file = {}
+                    self.currentRoomItem.file =  null
                     self.activeView = 'edit'
                 },
                 (error) => {
@@ -270,6 +272,11 @@ export default {
         },
         handleFileUpload(event) {
             this.currentRoomItem.file = event.target.files[0]
+        },
+        getObject(item) {
+            let object = item.default_item
+            object.template = item.template
+            return object
         },
     },
     mounted() {

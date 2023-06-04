@@ -28,7 +28,7 @@
                                 </template>
                             </td>
                             <td>{{ template.name }}</td>
-                            <td><img style="max-width: 25px;" :src="template.template"></td>
+                            <td><admin-object-view :propObject="getObject(template)"></admin-object-view></td>
                             <td>
                                 <button type="button" class="btn btn-primary mr-3" v-on:click="editItem(template.id)">Edit</button>
                             </td>
@@ -98,9 +98,11 @@
 import ItemTemplateService from '@/services/admin/item-template.service'
 import router from '@/router'
 import RoomItemService from '@/services/admin/roomItem.service'
+import AdminObjectView from '@/components/modules/ObjectView.vue'
 
 export default {
     name: 'room-item-templates',
+    components: { AdminObjectView },
     data() {
         return {
             activeView: 'all',
@@ -252,6 +254,11 @@ export default {
         },
         handleFileUpload(event) {
             this.template.file = event.target.files[0]
+        },
+        getObject(item) {
+            let object = item.item.default_item
+            object.template = item.template
+            return object
         },
     },
     mounted() {

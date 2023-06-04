@@ -32,16 +32,22 @@ export default {
         },
         object: { type: String, default: '' },
         material: { type: String, default: '' },
+        template: { type: String, default: '' },
     },
     mounted() {
         let self = this
 
         let objLoader = new OBJLoader()
         let mtlLoader = new MTLLoader()
+
         mtlLoader.load(self.material, (mtl) => {
+            mtl.materialsInfo[Object.keys(mtl.materialsInfo)[0]].map_kd = self.template
             mtl.preload()
             objLoader.setMaterials(mtl)
             objLoader.load(self.object, (object) => {
+
+                console.log(object)
+
                 self.currentRender = object
                 self.currentRender.position.set(
                     self.coordinates.x,
@@ -55,7 +61,6 @@ export default {
                 )
 
                 self.currentRender.addEventListener('click', function() {
-                    // Handle the click event
                     console.log('Object clicked:', object);
                 });
 

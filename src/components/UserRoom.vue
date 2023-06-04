@@ -10,6 +10,7 @@
                         :uid="item.uid"
                         :object="item.object"
                         :material="item.material"
+                        :template="item.template"
                         :coordinates="item.coordinates"
                         :rotation="item.rotation"
                     >
@@ -27,7 +28,7 @@
 <script>
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
-import RoomItem from '@/components/RoomItem.vue'
+import RoomItem from '@/components/modules/RoomItem.vue'
 import UserService from "../services/user.service";
 
 export default {
@@ -61,106 +62,7 @@ export default {
             isDragging: false,
             currentObject: false,
             allowMoving: false,
-            items: [
-                // {
-                //     coordinates: {
-                //         x: 0,
-                //         y: 0,
-                //         z: 0,
-                //     },
-                //     rotation: {
-                //         x: 0,
-                //         y: 0,
-                //         z: 0,
-                //     },
-                //     object: '/images/sky.obj',
-                //     material: '/images/sky.mtl',
-                // },
-                {
-                    coordinates: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    rotation: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    object: '/images/grass.obj',
-                    material: '/images/grass.mtl',
-                },
-                {
-                    coordinates: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    rotation: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    object: '/images/room.obj',
-                    material: '/images/room.mtl',
-                },
-                {
-                    coordinates: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    rotation: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    object: '/images/shelf.obj',
-                    material: '/images/shelf.mtl',
-                },
-                // {
-                //     coordinates: {
-                //         x: 0,
-                //         y: 0,
-                //         z: 200,
-                //     },
-                //     rotation: {
-                //         x: 0,
-                //         y: 0,
-                //         z: 0,
-                //     },
-                //     object: '/images/shelf.obj',
-                //     material: '/images/shelf.mtl',
-                // },
-                {
-                    coordinates: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    rotation: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    object: '/images/window.obj',
-                    material: '/images/window.mtl',
-                },
-                {
-                    coordinates: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    rotation: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
-                    object: '/images/door.obj',
-                    material: '/images/door.mtl',
-                },
-            ],
+            items: [],
         }
     },
     mounted() {
@@ -190,8 +92,7 @@ export default {
 
         UserService.getUserBoard(self.userAuthKey).then(
             (response) => {
-                console.log(response)
-                // self.items = response.data;
+                self.items = response.data;
                 this.loading = false
             },
             (error) => {
