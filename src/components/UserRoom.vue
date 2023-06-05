@@ -17,6 +17,26 @@
                     </room-item>
                 </template>
             </div>
+            <div class="stats" v-if="isIssetStats">
+                <div
+                    v-for="stat in stats"
+                    :key="stat"
+                >
+                    {{ stat.achievement }}
+                    <progress max="100" :value="stat.progress" :class="'progress_' + stat.progress"></progress>
+                </div>
+            </div>
+            <div class="achievements" v-if="isIssetStats">
+                <div
+                    v-for="achievement in achievements"
+                    :key="achievement"
+                >
+                    <div class="achievements-item mb-3">
+                        {{ achievement.achievement }}
+                        <span class="button" v-on:click="setTemplate(achievement.id)">Set</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -29,7 +49,8 @@
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import RoomItem from '@/components/modules/RoomItem.vue'
-import UserService from "../services/user.service";
+import UserService from '../services/user.service'
+
 
 export default {
     name: 'user-room',
@@ -39,7 +60,7 @@ export default {
     props: {
         propUserAuthKey: {
             type: String,
-            default: ''
+            default: '',
         },
     },
     data() {
@@ -63,11 +84,11 @@ export default {
             currentObject: false,
             allowMoving: false,
             items: [],
+            stats: [],
+            achievements: [],
         }
     },
     mounted() {
-        let self = this
-
         this.scene = new THREE.Scene()
 
         this.camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 1, 10000)
@@ -89,21 +110,6 @@ export default {
         this.$refs.canvasWrapper.addEventListener('click', this.handleMouseClick)
 
         this.render()
-
-        UserService.getUserBoard(self.userAuthKey).then(
-            (response) => {
-                self.items = response.data;
-                this.loading = false
-            },
-            (error) => {
-                self.content =
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-            }
-        );
     },
     beforeUnmount() {
         this.$refs.canvasWrapper.removeEventListener('mousedown', this.handleMouseDown)
@@ -178,11 +184,83 @@ export default {
 
             this.camera.lookAt(this.target)
         },
-
         render() {
             this.renderer.render(this.scene, this.camera)
             requestAnimationFrame(this.render)
             TWEEN.update()
+        },
+        getItems() {
+            let self = this
+            UserService.getUserBoard(self.userAuthKey).then(
+                (response) => {
+                    self.items = response.data
+                    self.loading = false
+                },
+                (error) => {
+                    console.log((error.response &&
+                            error.response.data &&
+                            error.response.data.message) ||
+                        error.message ||
+                        error.toString())
+                },
+            )
+        },
+        getStats() {
+            let self = this
+            UserService.getStatsProgress(self.userAuthKey).then(
+                (response) => {
+                    self.stats = response.data
+                    self.loading = false
+                },
+                (error) => {
+                    console.log((error.response &&
+                            error.response.data &&
+                            error.response.data.message) ||
+                        error.message ||
+                        error.toString())
+                },
+            )
+        },
+        getAchievements() {
+            let self = this
+            UserService.getAchievements(self.userAuthKey).then(
+                (response) => {
+                    self.achievements = response.data
+                    self.loading = false
+                },
+                (error) => {
+                    console.log((error.response &&
+                            error.response.data &&
+                            error.response.data.message) ||
+                        error.message ||
+                        error.toString())
+                },
+            )
+        },
+        setTemplate(id) {
+            let self = this
+            UserService.setAchievementTemplate(self.userAuthKey, id).then(
+                () => {
+                    self.getItems()
+                },
+                (error) => {
+                    console.log((error.response &&
+                            error.response.data &&
+                            error.response.data.message) ||
+                        error.message ||
+                        error.toString())
+                },
+            )
+        },
+    },
+    created() {
+        this.getItems()
+        this.getStats()
+        this.getAchievements()
+    },
+    computed: {
+        isIssetStats() {
+            return !!this.stats.length
         },
     },
 }

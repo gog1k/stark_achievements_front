@@ -9,7 +9,19 @@ class UserService {
   }
 
   getUserBoard(user) {
-    return axios.get(API_URL + '/user-page/' + user, { headers: authHeader() });
+    return axios.get(API_URL + '/user-page/items/' + user, { headers: authHeader() });
+  }
+
+  getStatsProgress(user) {
+    return axios.get(API_URL + '/user-page/stats/' + user, { headers: authHeader() });
+  }
+
+  getAchievements(user) {
+    return axios.get(API_URL + '/user-page/achievements/' + user, { headers: authHeader() });
+  }
+
+  setAchievementTemplate(user, achievementId) {
+    return axios.post(API_URL + '/user-page/achievements/' + user, {'achievementId': achievementId},{ headers: authHeader() });
   }
 
   getModeratorBoard() {
