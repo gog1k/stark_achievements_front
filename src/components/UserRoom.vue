@@ -18,6 +18,7 @@
                 </template>
             </div>
             <div class="stats" v-if="isIssetStats">
+                <div>Achievements progress</div>
                 <div
                     v-for="stat in stats"
                     :key="stat"
@@ -26,16 +27,21 @@
                     <progress max="100" :value="stat.progress" :class="'progress_' + stat.progress"></progress>
                 </div>
             </div>
-            <div class="achievements" v-if="isIssetStats">
-                <div
-                    v-for="achievement in achievements"
-                    :key="achievement"
-                >
-                    <div class="achievements-item mb-3">
-                        {{ achievement.achievement }}
-                        <span class="button" v-on:click="setTemplate(achievement.id)">Set</span>
+            <div class="achievements" v-if="isIssetAchievements">
+                <Dropdown @visible-change="change">
+                    <template #trigger>
+                        <div class="btn btn-success">Rewards</div>
+                    </template>
+                    <div
+                        v-for="achievement in achievements"
+                        :key="achievement"
+                    >
+                        <div class="achievements-item">
+                            {{ achievement.achievement }}
+                            <span class="button" v-on:click="setTemplate(achievement.id)">Set</span>
+                        </div>
                     </div>
-                </div>
+                </Dropdown>
             </div>
         </div>
     </div>
@@ -50,12 +56,14 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import RoomItem from '@/components/modules/RoomItem.vue'
 import UserService from '../services/user.service'
+import Dropdown from 'v-dropdown'
 
 
 export default {
     name: 'user-room',
     components: {
         RoomItem,
+        Dropdown,
     },
     props: {
         propUserAuthKey: {
@@ -66,8 +74,8 @@ export default {
     data() {
         return {
             userAuthKey: this.propUserAuthKey,
-            target: new THREE.Vector3(100, 100, 100),
-            distance: 1200,
+            target: new THREE.Vector3(250, 200, 250),
+            distance: 1000,
             phi: Math.PI / 2,
             theta: Math.PI / 2,
             minPhi: 0.1,
@@ -93,7 +101,7 @@ export default {
 
         this.camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 1, 10000)
         this.rotateCamera(75, 30)
-        this.camera.lookAt(0, 0, 0)
+        this.camera.lookAt(this.target)
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true })
         this.renderer.setSize(this.$el.clientWidth, this.$el.clientHeight)
@@ -115,6 +123,7 @@ export default {
         this.$refs.canvasWrapper.removeEventListener('mousedown', this.handleMouseDown)
         this.$refs.canvasWrapper.removeEventListener('mousemove', this.handleMouseMove)
         this.$refs.canvasWrapper.removeEventListener('mouseup', this.handleMouseUp)
+        this.$refs.canvasWrapper.removeEventListener('click', this.handleMouseClick)
     },
     methods: {
         handleMouseClick(event) {
@@ -261,6 +270,9 @@ export default {
     computed: {
         isIssetStats() {
             return !!this.stats.length
+        },
+        isIssetAchievements() {
+            return !!this.achievements.length
         },
     },
 }

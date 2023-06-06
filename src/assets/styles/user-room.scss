@@ -19,27 +19,45 @@
   border: 1px solid white;
   color: white;
   width: 200px;
+  border-radius: 4px;
 }
 
 .achievements {
   position: fixed;
+  display: flex;
+  justify-content: right;
   top: 50px;
   right: 50px;
   padding: 15px;
-  border: 1px solid white;
   color: white;
   width: 200px;
+}
 
-  &-item {
-    display: flex;
-    justify-content: space-between;
+.v-dropdown-container {
+  background: #ffffff;
+  padding: 15px;
+  width: 200px;
 
-    .button {
+  &>div {
+    margin-top: 1rem;
+
+    &:first-child {
+      margin-top: 0px;
+    }
+  }
+
+  .achievements {
+    &-item {
       display: flex;
-      background: green;
-      padding: 2px 9px;
-      border-radius: 4px;
-      cursor: pointer;
+      justify-content: space-between;
+
+      .button {
+        display: flex;
+        background: green;
+        padding: 2px 9px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
     }
   }
 }

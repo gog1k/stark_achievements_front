@@ -11,6 +11,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Active</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Item</th>
                         <th scope="col">template</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -28,6 +29,9 @@
                                 </template>
                             </td>
                             <td>{{ template.name }}</td>
+                            <td>
+                                <router-link v-if="template.item?.id" :to="{ name: 'edit-room-item', params: { propRoomItemId: template.item.id }}">{{ template.item.name }}</router-link>
+                            </td>
                             <td><admin-object-view :propObject="getObject(template)"></admin-object-view></td>
                             <td>
                                 <button type="button" class="btn btn-primary mr-3" v-on:click="editItem(template.id)">Edit</button>

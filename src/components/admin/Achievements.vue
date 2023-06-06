@@ -263,10 +263,10 @@ export default {
             )
         },
         save() {
-            // let self = this
+            let self = this
             AchievementService.save(this.currentAchievement).then(
                 () => {
-                    // self.goToList()
+                    self.goToList()
                 },
                 (error) => {
                     console.log(error)
