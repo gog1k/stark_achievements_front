@@ -17,10 +17,6 @@ class ItemTemplateService
         return axios.get(API_URL + '/admin/room-item-templates/template/' + templateId, { headers: authHeader() })
     }
 
-    getAllForItem(itemId) {
-        return axios.get(API_URL + '/admin/room-item-templates/item/' + itemId, { headers: authHeader() })
-    }
-
     get(id) {
         return axios.get(API_URL + '/admin/room-item-templates/' + id, { headers: authHeader() })
     }

@@ -13,6 +13,7 @@
                         :template="item.template"
                         :coordinates="item.coordinates"
                         :rotation="item.rotation"
+                        :link="item.link"
                     >
                     </room-item>
                 </template>
@@ -136,9 +137,7 @@ export default {
             let intersects = this.raycaster.intersectObjects(this.scene.children, true)
 
             if (intersects.length) {
-                let object = this.scene.getObjectById(intersects[0].object.id)
-                console.log('click', intersects[0].object)
-                console.log('object', object)
+                intersects[0].object.dispatchEvent({ type: 'goToLink' });
             }
         },
         handleMouseDown(event) {

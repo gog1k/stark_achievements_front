@@ -33,6 +33,7 @@ export default {
         object: { type: String, default: '' },
         material: { type: String, default: '' },
         template: { type: String, default: '' },
+        link: { type: String, default: '' },
     },
     mounted() {
         let self = this
@@ -46,8 +47,6 @@ export default {
             objLoader.setMaterials(mtl)
             objLoader.load(self.object, (object) => {
 
-                console.log(object)
-
                 self.currentRender = object
                 self.currentRender.position.set(
                     self.coordinates.x,
@@ -60,8 +59,10 @@ export default {
                     2 * Math.PI * (self.rotation.z / 360),
                 )
 
-                self.currentRender.addEventListener('click', function() {
-                    console.log('Object clicked:', object);
+                self.currentRender.children[0].addEventListener('goToLink', function() {
+                    if (self.link !== '') {
+                        window.parent.location = self.link
+                    }
                 });
 
                 self.$parent.scene.add(self.currentRender)

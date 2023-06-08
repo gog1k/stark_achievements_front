@@ -104,6 +104,10 @@
                         <label>Template</label>
                         <input type="file" @change="handleFileUpload( $event )"/>
                     </div>
+                    <div class="form-group col-12">
+                        <label>Link</label>
+                        <input type="text" class="form-control" placeholder="http://example.com" v-model="currentRoomItem.link">
+                    </div>
                 </div>
                 <div>
                     <div class="btn btn-success mr-3" v-on:click="save()">
@@ -250,6 +254,7 @@ export default {
                     coordinates: '0,0,0',
                     rotation: '0,0,0',
                     file: null,
+                    link: '',
                 }
                 await this.getAllowProjects()
                 this.getDefaultRoomItem(this.roomItemId)
