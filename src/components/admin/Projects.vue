@@ -7,9 +7,11 @@
             <template v-else-if="activeView === 'view'">
                 <h3 class="mt-3">View project</h3>
             </template>
+            <template v-else-if="activeView === 'getApiKey'">
+                Get api key for project
+            </template>
             <template v-else>
                 <h3 class="mt-3">
-                    {{activeView}}
                     <template v-if="issetProject">
                         Edit project
                     </template>
@@ -86,11 +88,31 @@
                     </div>
                     <div class="form-group col-12">
                         <h4>apiKey</h4>
-                        <div class="font-weight-bold">{{ currentProject.api_key }}</div>
+                        <button @click="getApiKey()">Get api key</button>
                     </div>
                 </div>
                 <div>
                     <div class="btn btn-primary mr-3" v-on:click="goToList()">Back</div>
+                </div>
+            </div>
+        </template>
+        <template v-if="activeView === 'getApiKey'">
+            <div>
+                <div class="row" v-if="emptyApiKey">
+                    <div class="form-group col-12">
+                        <label>Login</label>
+                        <input type="text" class="form-control" placeholder="Login" v-model="login">
+                    </div>
+                    <div class="form-group col-12">
+                        <label>Password</label>
+                        <input type="password" class="form-control" placeholder="Password" v-model="password">
+                    </div>
+                    <div class="form-group col-12">
+                        <button class="btn btn-success" @click="viewApiKey()">Get key</button>
+                    </div>
+                </div>
+                <div v-else>
+                    {{apiKey}}
                 </div>
             </div>
         </template>
@@ -113,6 +135,9 @@ export default {
             activeView: this.propActiveView,
             projectId: this.propProjectId,
             currentProject: {},
+            login: '',
+            password: '',
+            apiKey: '',
         }
     },
     props: {
@@ -128,6 +153,9 @@ export default {
         },
     },
     computed: {
+        emptyApiKey() {
+            return this.apiKey === ''
+        },
         currentUser() {
             return this.$store.state.auth.user
         },
@@ -143,6 +171,23 @@ export default {
         },
     },
     methods: {
+        getApiKey() {
+            this.activeView = 'getApiKey'
+        },
+        viewApiKey() {
+            let self = this
+
+            ProjectService.getApiKey(self.login, self.password, self.currentProject.id).then(
+                (response) => {
+                    self.apiKey = response.data
+                },
+                (error) => {
+                    console.log(error)
+                },
+            )
+
+            console.log('viewApiKey')
+        },
         changePage(page) {
             if (this.pagination.currentPage === page) {
                 return

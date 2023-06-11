@@ -84,6 +84,12 @@
                             <option v-for="item in defaultRoomItems" :key="item" :value="item.id">{{ item.code }}</option>
                         </select>
                     </div>
+                    <div class="form-group col-4" v-if="setObject">
+                        <admin-object-view :propObject="getDefaultObject" :key="currentRoomItem.default_room_item_id"></admin-object-view>
+                    </div>
+                    <div class="form-group col-8" v-if="setObject">
+                        <a target="_blank" :href="getDefaultObject.template">Download template</a>
+                    </div>
                     <div class="form-group col-12">
                         <label>Coordinates (x,y,z)</label>
                         <input type="text" class="form-control" placeholder="0,20,0" v-model="currentRoomItem.coordinates">
@@ -163,6 +169,13 @@ export default {
     computed: {
         issetRoomItem() {
             return typeof this.currentRoomItem.id !== 'undefined' && this.currentRoomItem.id > 0
+        },
+        setObject() {
+            return typeof this.currentRoomItem.default_room_item_id !== 'undefined' && this.currentRoomItem.default_room_item_id > 0
+        },
+        getDefaultObject() {
+            let self = this
+            return self.defaultRoomItems.find((elem) => elem.id === this.currentRoomItem.default_room_item_id)
         },
     },
     methods: {

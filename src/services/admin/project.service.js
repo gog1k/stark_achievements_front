@@ -17,6 +17,10 @@ class ProjectService
         return axios.get(API_URL + '/admin/projects/' + id, { headers: authHeader() })
     }
 
+    getApiKey(login, password, projectId) {
+        return axios.post(API_URL + '/admin/projects/getApiKey', {login: login, password: password, project_id: projectId}, { headers: authHeader() })
+    }
+
     save(item) {
         return axios.post(API_URL + '/admin/projects/' + (item.id > 0 ? item.id : 'create'), item, { headers: authHeader() })
     }
