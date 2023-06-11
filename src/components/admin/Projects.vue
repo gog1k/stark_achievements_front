@@ -42,8 +42,8 @@
                             <td>{{ project.name }}</td>
                             <td>{{ project.users_count }}</td>
                             <td>
-                                <button type="button" class="btn btn-primary mr-3" v-on:click="edit(project.id)">View</button>
-                                <button v-if="isSuperUser" type="button" class="btn btn-warning mr-3" v-on:click="edit(project.id)">Edit</button>
+                                <button type="button" class="btn btn-primary mr-3" v-on:click="view(project.id)">View</button>
+                                <button type="button" class="btn btn-warning mr-3" v-on:click="edit(project.id)">Edit</button>
                             </td>
                         </tr>
                     </template>
@@ -58,12 +58,18 @@
                 </table>
             </div>
         </template>
-        <template v-if="isSuperUser && (activeView === 'edit' || activeView === 'create')">
+        <template v-if="(activeView === 'edit' || isSuperUser && activeView === 'create')">
             <div>
-                <div class="row">
+                <div class="row" v-if="activeView === 'create'">
                     <div class="form-group col-12">
                         <label>Name</label>
                         <input type="text" class="form-control" placeholder="Project name" v-model="currentProject.name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <label>Callback url</label>
+                        <input type="text" class="form-control" placeholder="http://example.com" v-model="currentProject.callback_url">
                     </div>
                 </div>
                 <div>
@@ -83,8 +89,16 @@
             <div>
                 <div class="row">
                     <div class="form-group col-12">
+                        <h4>Id</h4>
+                        <div class="font-weight-bold">{{ currentProject.id }}</div>
+                    </div>
+                    <div class="form-group col-12">
                         <h4>Name</h4>
                         <div class="font-weight-bold">{{ currentProject.name }}</div>
+                    </div>
+                    <div class="form-group col-12">
+                        <h4>Callback url</h4>
+                        <div class="font-weight-bold">{{ currentProject.callback_url }}</div>
                     </div>
                     <div class="form-group col-12">
                         <h4>apiKey</h4>
@@ -197,6 +211,9 @@ export default {
         goToList() {
             this.$router.push({ path: this.$router.options.history.state.back })
         },
+        view(id) {
+            this.$router.push({ name: 'view-project', params: { propProjectId: id } })
+        },
         edit(id) {
             this.$router.push({ name: 'edit-project', params: { propProjectId: id } })
         },
@@ -209,9 +226,8 @@ export default {
             ProjectService.get(id).then(
                 (response) => {
                     self.currentProject = response.data
-                    self.activeView = 'edit'
-                    if (!self.isSuperUser) {
-                        self.activeView = 'view'
+                    if (self.activeView === 'list') {
+                        self.activeView = 'edit'
                     }
                 },
                 (error) => {
@@ -245,10 +261,11 @@ export default {
             )
         },
         updatePage() {
+            console.log(this.activeView)
             if (this.activeView === 'list') {
                 this.getList()
             }
-            if (this.activeView === 'edit') {
+            if (this.activeView === 'edit' || this.activeView === 'view') {
                 this.getProject(this.projectId)
             }
         },

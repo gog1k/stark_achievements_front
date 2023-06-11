@@ -86,6 +86,17 @@ const routes = [
         }
     },
     {
+        path: '/admin/projects/view/:propProjectId',
+        name: 'view-project',
+        // lazy-loaded
+        component: Projects,
+        props: function(route) {
+            return Object.assign({}, route.params, {
+                propActiveView: 'view'
+            })
+        }
+    },
+    {
         path: '/admin/projects/:propProjectId',
         name: 'edit-project',
         // lazy-loaded
