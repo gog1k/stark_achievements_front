@@ -262,7 +262,6 @@ export default {
             )
         },
         updatePage() {
-            console.log(this.activeView)
             if (this.activeView === 'list') {
                 this.getList()
             }

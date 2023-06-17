@@ -222,7 +222,6 @@ export default {
                             room_item_id: self.roomItems[0].id,
                             file: {},
                         }
-                        console.log(self.template)
                         this.activeView = type
                     },
                     (error) => {

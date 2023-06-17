@@ -219,7 +219,6 @@ export default {
         },
         save() {
             let self = this
-            console.log(this.currentAchievement)
             EventService.save(this.currentAchievement).then(
                 () => {
                     self.goToList()
