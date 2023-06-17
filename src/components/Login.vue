@@ -28,6 +28,8 @@
           </button>
         </div>
 
+        <router-link to="/forgot-password" class="nav-link">Forgot password</router-link>
+
         <div class="form-group">
           <div v-if="message" class="alert alert-danger" role="alert">
             {{ message }}

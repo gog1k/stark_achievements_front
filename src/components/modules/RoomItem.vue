@@ -38,6 +38,8 @@ export default {
     mounted() {
         let self = this
 
+        console.log(self)
+
         let objLoader = new OBJLoader()
         let mtlLoader = new MTLLoader()
 

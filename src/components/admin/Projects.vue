@@ -104,6 +104,7 @@
                         <h4>apiKey</h4>
                         <button @click="getApiKey()">Get api key</button>
                     </div>
+                    <component-room v-if="currentProject.room_items" :prop-items="currentProject.room_items"></component-room>
                 </div>
                 <div>
                     <div class="btn btn-primary mr-3" v-on:click="goToList()">Back</div>
@@ -126,7 +127,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    {{apiKey}}
+                    Key sent to email
                 </div>
             </div>
         </template>
@@ -136,9 +137,11 @@
 <script>
 import ProjectService from '@/services/admin/project.service'
 import Pagination from '@/components/Pagination.vue'
+import ComponentRoom from '@/components/modules/Room.vue'
 
 export default {
     components: {
+        ComponentRoom,
         Pagination,
     },
     name: 'admin-projects',
@@ -199,8 +202,6 @@ export default {
                     console.log(error)
                 },
             )
-
-            console.log('viewApiKey')
         },
         changePage(page) {
             if (this.pagination.currentPage === page) {

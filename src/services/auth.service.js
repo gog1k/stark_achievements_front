@@ -16,6 +16,21 @@ class AuthService
             return response.data
         })
     }
+    forgot(user) {
+        return axios.post(API_URL + '/forgot', {
+            email: user.email,
+        }).then(response => {
+            return response.data
+        })
+    }
+    reset(user) {
+        return axios.post(API_URL + '/reset?token=' + user.code, {
+            email: user.email,
+            password: user.password,
+        }).then(response => {
+            return response.data
+        })
+    }
 
     logout() {
         localStorage.removeItem('user')
