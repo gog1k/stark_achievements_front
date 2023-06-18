@@ -21,7 +21,7 @@
                 </h3>
             </template>
         </h3>
-        <template v-if="activeView === 'list' && isSuperUser">
+        <template v-if="activeView === 'list'">
             <div class="btn btn-primary mb-3 mr-3" v-on:click="create()">Create new</div>
         </template>
         <template v-if="activeView === 'list'">
@@ -58,7 +58,7 @@
                 </table>
             </div>
         </template>
-        <template v-if="(activeView === 'edit' || isSuperUser && activeView === 'create')">
+        <template v-if="(activeView === 'edit' || activeView === 'create')">
             <div>
                 <div class="row" v-if="activeView === 'create'">
                     <div class="form-group col-12">
